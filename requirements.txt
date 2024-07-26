@@ -1,0 +1,6 @@
+flask
+pytest-asyncio
+python-dotenv
+openai
+aiohttp
+requests
