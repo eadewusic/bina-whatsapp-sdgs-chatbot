@@ -60,6 +60,7 @@ def handle_exception(e):
     logging.error(f"Unhandled exception: {str(e)}")
     return jsonify({"status": "error", "message": "Internal server error"}), 500
 
+# Update the /socketcluster route
 @webhook_blueprint.route("/socketcluster/", methods=["GET"])
 def socketcluster():
-    return jsonify({"status": "error", "message": "Not implemented"}), 501
+    return jsonify({"status": "success", "message": "SocketCluster Endpoint"}), 200
