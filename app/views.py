@@ -3,11 +3,13 @@ import json
 from flask import Blueprint, request, jsonify, current_app
 from .decorators.security import signature_required
 from .utils.whatsapp_utils import process_whatsapp_message, is_valid_whatsapp_message
+from start.whatsapp_quickstart import send_message, get_text_message_input  # Import these functions
 
 webhook_blueprint = Blueprint("webhook", __name__)
 
 def handle_message():
     body = request.get_json()
+    logging.info(f"Received webhook body: {body}")  # Log the entire webhook body
 
     # Check if it's a WhatsApp status update
     if body.get("entry", [{}])[0].get("changes", [{}])[0].get("value", {}).get("statuses"):
@@ -16,13 +18,32 @@ def handle_message():
 
     try:
         if is_valid_whatsapp_message(body):
-            process_whatsapp_message(body)
+            # Extract the message and sender
+            message = body['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
+            sender = body['entry'][0]['changes'][0]['value']['messages'][0]['from']
+            
+            # Process the message (for example, convert to uppercase)
+            response_text = message.upper()
+            
+            # Prepare and send the response
+            response_data = get_text_message_input(recipient=sender, text=response_text)
+            response = send_message(response_data)
+            
+            if response and response.status_code == 200:
+                logging.info(f"Message sent successfully: {response.text}")
+            else:
+                logging.error(f"Failed to send message: {response.text if response else 'No response'}")
+            
             return jsonify({"status": "ok"}), 200
         else:
+            logging.warning("Not a valid WhatsApp message")
             return jsonify({"status": "error", "message": "Not a WhatsApp API event"}), 404
     except json.JSONDecodeError:
         logging.error("Failed to decode JSON")
         return jsonify({"status": "error", "message": "Invalid JSON provided"}), 400
+    except Exception as e:
+        logging.error(f"Error processing message: {str(e)}")
+        return jsonify({"status": "error", "message": "Internal server error"}), 500
 
 def verify():
     mode = request.args.get("hub.mode")
@@ -60,7 +81,6 @@ def handle_exception(e):
     logging.error(f"Unhandled exception: {str(e)}")
     return jsonify({"status": "error", "message": "Internal server error"}), 500
 
-# Update the /socketcluster route
 @webhook_blueprint.route("/socketcluster/", methods=["GET"])
 def socketcluster():
     return jsonify({"status": "success", "message": "SocketCluster Endpoint"}), 200
