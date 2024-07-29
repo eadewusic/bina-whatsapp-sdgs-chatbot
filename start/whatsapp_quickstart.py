@@ -65,16 +65,19 @@ def send_message(data):
 
     url = f"https://graph.facebook.com/{VERSION}/{PHONE_NUMBER_ID}/messages"
 
-    response = requests.post(url, data=data, headers=headers)
-    if response.status_code == 200:
+    try:
+        response = requests.post(url, data=data, headers=headers)
+        response.raise_for_status()  # Raises a HTTPError if the status is 4xx, 5xx
         print("Status:", response.status_code)
         print("Content-type:", response.headers["content-type"])
         print("Body:", response.text)
         return response
-    else:
-        print(response.status_code)
-        print(response.text)
-        return response
+    except requests.exceptions.HTTPError as err:
+        print(f"HTTP error occurred: {err}")
+        print(f"Response body: {err.response.text}")
+    except Exception as err:
+        print(f"An error occurred: {err}")
+    return None
 
 
 data = get_text_message_input(
