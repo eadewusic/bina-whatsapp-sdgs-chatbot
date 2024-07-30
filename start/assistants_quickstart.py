@@ -10,7 +10,7 @@ client = OpenAI(api_key=OPEN_AI_API_KEY)
 
 
 # --------------------------------------------------------------
-# Upload file
+# Upload file of data to OpenAI
 # --------------------------------------------------------------
 def upload_file(path):
     # Upload a file with an "assistants" purpose
@@ -91,7 +91,7 @@ def generate_response(message_body, wa_id, name):
 # --------------------------------------------------------------
 def run_assistant(thread):
     # Retrieve the Assistant
-    assistant = client.beta.assistants.retrieve("asst_7Wx2nQwoPWSf710jrdWTDlfE")
+    assistant = client.beta.assistants.retrieve("asst_TejiGXAQTZL82H0PmuOqXA2w")
 
     # Run the assistant
     run = client.beta.threads.runs.create(
