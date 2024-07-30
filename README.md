@@ -4,11 +4,11 @@ The first of its kind! This WhatsApp chatbot is a new, standalone software appli
 
 # Technologies Used
 
-- Meta (formerly Facebook) Cloud API
-- Pure Python
-- Flask particular
-- Webhook events to receive messages in real-time
-- OpenAI to generate AI responses
+- Meta (formerly Facebook) Cloud API.
+- Pure Python.
+- Flask.
+- Webhook events to receive messages in real-time.
+- OpenAI to generate AI responses.
 
 ## Prerequisites
 
@@ -226,6 +226,5 @@ I welcome contributions to this project, **only after September 2024!** If you w
 ## Contact
 
 Follow my coding journey on YouTube: [youtube.com/@climiradiroberts](https://www.youtube.com/@climiradiroberts)
-Contact
 
 If you have any questions, feedback, or collaboration requests, please feel free to reach out to me at [euniceadewusic@gmail.com](mailto:euniceadewusic@gmail.com)
