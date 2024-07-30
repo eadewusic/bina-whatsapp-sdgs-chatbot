@@ -209,7 +209,8 @@ When dealing with WhatsApp Business API and wanting to experiment without affect
 5. Temporary Number Services
 6. Dedicated Devices for Development
 
-**Recommendation from Dave Ebbelaar**: If this is for a more prolonged or professional purpose, using a virtual phone number service or purchasing a new SIM card for a dedicated device is advisable. For quick tests, a temporary number might suffice, but always be cautious about security and privacy. Remember that once a number is associated with WhatsApp Business API, it cannot be used with regular WhatsApp on a device unless you deactivate it from the Business API and reverify it on the device.
+**NOTICE!!!**: If your project is for a more prolonged or professional purpose, using a virtual phone number service or purchasing a new SIM card for a dedicated device is highly recommended. For quick tests, a temporary number might suffice, but always be cautious about security and privacy.
+Remember that once a number is associated with WhatsApp Business API, it cannot be used with regular WhatsApp on a device unless you deactivate it from the Business API and re-verify it on the device :)
 
 ## Contributing
 
