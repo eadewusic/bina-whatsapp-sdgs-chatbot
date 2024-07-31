@@ -4,8 +4,19 @@ from dotenv import load_dotenv
 import os
 import time
 
+# Load environment variables from .env file
 load_dotenv()
-OPENAI_API_KEY = "sk-proj-tg73EKYDHDtkbv0CQUZrT3BlbkFJ3wu4HFKrgT13USdo9goE"
+
+# Manually set the environment variable for testing
+# os.environ["OPENAI_API_KEY"] = "sk-proj-QR7qOs3R25kphXT1Cf34T3BlbkFJh7TM4QTX5Mc7dHA8Tv3y"
+
+# Retrieve API Key from environment variables
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# Debugging: Print the API Key to ensure it is loaded correctly
+print(f"OPENAI_API_KEY from os.environ: {os.environ.get('OPENAI_API_KEY')}")
+
+# Set OpenAI API key
 openai.api_key = OPENAI_API_KEY
 
 # --------------------------------------------------------------
@@ -13,8 +24,12 @@ openai.api_key = OPENAI_API_KEY
 # --------------------------------------------------------------
 def upload_file(path):
     # Upload a file with an "assistants" purpose
-    file = openai.File.create(file=open(path, "rb"), purpose="assistants")
-    return file
+    try:
+        file = openai.File.create(file=open(path, "rb"), purpose="assistants")
+        return file
+    except openai.error.OpenAIError as e:
+        print(f"An error occurred during file upload: {e}")
+        return None
 
 file = upload_file("../data/sdgs-faq.pdf")
 

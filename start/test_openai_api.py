@@ -5,8 +5,11 @@ import os
 # Load environment variables from a .env file
 load_dotenv()
 
+# Manually set the environment variable for testing
+# os.environ["OPENAI_API_KEY"] = "sk-proj-QR7qOs3R25kphXT1Cf34T3BlbkFJh7TM4QTX5Mc7dHA8Tv3y"
+
 # Retrieve the OpenAI API key from environment variables
-OPENAI_API_KEY = ""
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Ensure the API key is set
 if not OPENAI_API_KEY:
