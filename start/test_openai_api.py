@@ -6,7 +6,7 @@ import os
 load_dotenv()
 
 # Retrieve the OpenAI API key from environment variables
-OPENAI_API_KEY = "sk-proj-WtSKare6gWFPyUOIzxmWT3BlbkFJWG79ZYAUnxwspQyJYR7p"
+OPENAI_API_KEY = ""
 
 # Ensure the API key is set
 if not OPENAI_API_KEY:
