@@ -92,6 +92,7 @@ def generate_response(message_body, wa_id, name):
 def run_assistant(thread):
     # Retrieve the Assistant
     assistant = client.beta.assistants.retrieve("asst_TejiGXAQTZL82H0PmuOqXA2w")
+    thread = client.beta.threads.retrieve("thread_UztY3kgWwla4IqSSfIBLXQnu")
 
     # Run the assistant
     run = client.beta.threads.runs.create(
@@ -116,10 +117,10 @@ def run_assistant(thread):
 # Test assistant
 # --------------------------------------------------------------
 
-new_message = generate_response("What are the Sustainable Development Goals?", "123", "John")
+new_message = generate_response("What are the Sustainable Development Goals?", "123", "Bob")
 
-new_message = generate_response("How many SDGs do we have?", "456", "Sarah")
+new_message = generate_response("How many SDGs do we have?", "456", "Louisa")
 
-new_message = generate_response("Where can I find data on gender equality?", "123", "John")
+new_message = generate_response("Where can I find data on gender equality?", "123", "Bob")
 
-new_message = generate_response("What are the main targets of SDG 7?", "456", "Sarah")
+new_message = generate_response("What are the main targets of SDG 7?", "456", "Louisa")
