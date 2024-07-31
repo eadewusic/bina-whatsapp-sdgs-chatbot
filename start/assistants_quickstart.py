@@ -5,7 +5,7 @@ import os
 import time
 
 load_dotenv()
-OPENAI_API_KEY = "sk-proj-95HwF9Orx2d4JmGoE7IUT3BlbkFJxluyw4htws7cBdgt62fH"
+OPENAI_API_KEY = "sk-proj-tg73EKYDHDtkbv0CQUZrT3BlbkFJ3wu4HFKrgT13USdo9goE"
 openai.api_key = OPENAI_API_KEY
 
 # --------------------------------------------------------------
@@ -37,16 +37,20 @@ def generate_response(message_body, wa_id, name):
         # Placeholder for actual thread retrieval if needed
         pass
 
-    # Generate response using OpenAI's Completion API
-    response = openai.Completion.create(
-        model="gpt-3.5-turbo",  # Replace with your fine-tuned model ID if applicable
-        prompt=message_body,
-        max_tokens=150,
-    )
+    try:
+        # Generate response using OpenAI's Completion API
+        response = openai.Completion.create(
+            model="gpt-3.5-turbo",  # Replace with your fine-tuned model ID if applicable
+            prompt=message_body,
+            max_tokens=150,
+        )
+        new_message = response.choices[0].text.strip()
+        print(f"Generated message: {new_message}")
+        return new_message
 
-    new_message = response.choices[0].text.strip()
-    print(f"Generated message: {new_message}")
-    return new_message
+    except openai.error.OpenAIError as e:
+        print(f"An error occurred: {e}")
+        return None
 
 # --------------------------------------------------------------
 # Thread management (placeholder)
