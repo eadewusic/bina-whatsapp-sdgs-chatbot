@@ -3,7 +3,7 @@ from flask import current_app, jsonify
 import json
 import requests
 
-from app.services.openai_service import generate_response
+from app.services.gemini_service import generate_response
 import re
 
 
@@ -85,7 +85,7 @@ def process_whatsapp_message(body):
     # TODO: implement custom function here
     response = generate_response(message_body)
 
-    # OpenAI Integration
+    # Gemini Integration
     response = generate_response(message_body, wa_id, name)
     response = process_text_for_whatsapp(response)
 
