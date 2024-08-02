@@ -3,8 +3,9 @@ from flask import current_app, jsonify
 import json
 import requests
 import re
+import json
 
-from start.assistants_quickstart import generate_response
+from start.assistants_quickstart import generate_response, save_conversation
 
 def log_http_response(response):
     """Logs details of HTTP responses."""
@@ -34,6 +35,7 @@ def send_message(data):
     url = f"https://graph.facebook.com/{current_app.config['VERSION']}/{current_app.config['PHONE_NUMBER_ID']}/messages"
 
     try:
+        logging.info(f"Sending request to {url} with payload: {data}")
         response = requests.post(
             url, data=data, headers=headers, timeout=10
         )
@@ -61,6 +63,11 @@ def process_text_for_whatsapp(text):
 
 def process_whatsapp_message(body):
     """Processes incoming WhatsApp messages and generates a response."""
+    logging.info(f"Processing incoming message: {json.dumps(body)}")
+    if not is_valid_whatsapp_message(body):
+        logging.error("Invalid WhatsApp message format")
+        return
+
     wa_id = body["entry"][0]["changes"][0]["value"]["contacts"][0]["wa_id"]
     name = body["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"]
 
@@ -71,6 +78,13 @@ def process_whatsapp_message(body):
     response = generate_response(message_body)
     # Format response for WhatsApp
     response = process_text_for_whatsapp(response)
+
+    # Save the conversation for debugging purposes
+    conversation = {
+        "user_message": message_body,
+        "bot_response": response
+    }
+    save_conversation(conversation)
 
     # Send response back to the user
     data = get_text_message_input(wa_id, response)
