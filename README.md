@@ -53,14 +53,14 @@ The first of its kind! Bina is a WhatsApp chatbot designed to help users learn m
 
 ## Prerequisites
 
-# For Users:
+#### For Users:
 
 1. Have a functional WhatsApp account.
 2. Have access to the internet.
 3. Be open-minded and ready to learn.
 4. Chat away with Bina, take action and leave your footprint in the sands of Social Impact.
 
-# For Developers:
+#### For Developers:
 
 1. Python 3.7 or higher installed on your system.
 2. A Meta developer account — If you don’t have one, you can [create a Meta developer account here](https://developers.facebook.com/).
