@@ -60,17 +60,6 @@ def webhook_get():
 @webhook_blueprint.route("/webhook", methods=["POST"])
 @signature_required
 def webhook_post():
-    """Handles POST requests for incoming messages."""
-    logging.info(f"Received POST request: {request.get_json()}")
+    """Handles POST requests to process incoming WhatsApp messages."""
+    logging.info(f"Received POST request: {request.json}")
     return handle_message()
-
-@webhook_blueprint.errorhandler(Exception)
-def handle_exception(e):
-    """Handles any unhandled exceptions."""
-    logging.error(f"Unhandled exception: {str(e)}")
-    return jsonify({"status": "error", "message": "Internal server error"}), 500
-
-@webhook_blueprint.route("/socketcluster/", methods=["GET"])
-def socketcluster():
-    """Handles GET requests to the SocketCluster endpoint."""
-    return jsonify({"status": "success", "message": "SocketCluster Endpoint"}), 200

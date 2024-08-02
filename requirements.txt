@@ -8,3 +8,4 @@ ngrok-1.3.0
 httpie-3.2.3
 # jupyterlab
 google-generativeai
+pip-24.2
