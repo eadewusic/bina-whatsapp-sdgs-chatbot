@@ -3,85 +3,105 @@ import shelve
 from dotenv import load_dotenv
 import os
 import time
+import logging
+
+print("Files in the current directory:", os.listdir())
+# Get the current script's directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the path to the PDF file
+pdf_path = os.path.join(current_dir, '..', 'data', 'sdgs-faq.pdf')
+print("PDF path:", pdf_path)
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Manually set the environment variable for testing
-# os.environ["OPENAI_API_KEY"] = "sk-proj-QR7qOs3R25kphXT1Cf34T3BlbkFJh7TM4QTX5Mc7dHA8Tv3y"
+# Retrieve the API key from environment variables/ Set the GEMINI API key
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+genai.api_key = GEMINI_API_KEY
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
-# Retrieve API Key from environment variables
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+def upload_to_gemini(path, mime_type=None):
+    """Uploads the given file to Gemini.
 
-# Debugging: Print the API Key to ensure it is loaded correctly
-print(f"OPENAI_API_KEY from os.environ: {os.environ.get('OPENAI_API_KEY')}")
+    See https://ai.google.dev/gemini-api/docs/prompting_with_media
+    """
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"The file '{path}' does not exist.")
+    file = genai.upload_file(path, mime_type=mime_type)
+    print(f"Uploaded file '{file.display_name}' as: {file.uri}")
+    return file
 
-# Set OpenAI API key
-openai.api_key = OPENAI_API_KEY
+def wait_for_files_active(files):
+  """Waits for the given files to be active.
 
-# --------------------------------------------------------------
-# Upload file of data to OpenAI
-# --------------------------------------------------------------
-def upload_file(path):
-    # Upload a file with an "assistants" purpose
-    try:
-        file = openai.File.create(file=open(path, "rb"), purpose="assistants")
-        return file
-    except openai.error.OpenAIError as e:
-        print(f"An error occurred during file upload: {e}")
-        return None
+  Some files uploaded to the Gemini API need to be processed before they can be
+  used as prompt inputs. The status can be seen by querying the file's "state"
+  field.
 
-file = upload_file("../data/sdgs-faq.pdf")
+  This implementation uses a simple blocking polling loop. Production code
+  should probably employ a more sophisticated approach.
+  """
+  print("Waiting for file processing...")
+  for name in (file.name for file in files):
+    file = genai.get_file(name)
+    while file.state.name == "PROCESSING":
+      print(".", end="", flush=True)
+      time.sleep(10)
+      file = genai.get_file(name)
+    if file.state.name != "ACTIVE":
+      raise Exception(f"File {file.name} failed to process")
+  print("...all files ready")
+  print()
 
-# --------------------------------------------------------------
-# Generate response using fine-tuned model or existing model
-# --------------------------------------------------------------
-def generate_response(message_body, wa_id, name):
-    # Check if there is already a thread_id for the wa_id
-    thread_id = check_if_thread_exists(wa_id)
+# Create the model
+generation_config = {
+  "temperature": 1,
+  "top_p": 0.95,
+  "top_k": 64,
+  "max_output_tokens": 8192,
+  "response_mime_type": "text/plain",
+}
 
-    # If a thread doesn't exist, create one and store it
-    if thread_id is None:
-        print(f"Creating new thread for {name} with wa_id {wa_id}")
-        # For demo purposes, this is replaced with a direct call to OpenAI's API
-        thread_id = wa_id  # Use wa_id as a thread_id placeholder
+model = genai.GenerativeModel(
+  model_name="gemini-1.5-pro",
+  generation_config=generation_config,
+  # safety_settings = Adjust safety settings
+  # See https://ai.google.dev/gemini-api/docs/safety-settings
+  system_instruction="You are Bina, a helpful SDG chatbot. You can introduce yourself as the user's new BFF minus the drama but this time, you are the user's SDGs Bestie. Use your knowledge base to provide short, detailed but simple and easy-to-understand information about Sustainable Development Goals (SDGs) - its targets and indicators, answer user queries about SDGs, offer project analysis for user's project or project ideas, and potentially generate SDGs-related professional advice on aligning projects with the SDGs. If you don't know the answer, say simply that you cannot help with that question and suggest alternative resources. Be informative, friendly, and engaging.",
+)
 
-    # Otherwise, retrieve the existing thread
-    else:
-        print(f"Retrieving existing thread for {name} with wa_id {wa_id}")
-        # Placeholder for actual thread retrieval if needed
-        pass
+# TODO Make these files available on the local file system
+# You may need to update the file paths
+files = [
+  upload_to_gemini(pdf_path, mime_type="application/pdf"),
+]
 
-    try:
-        # Generate response using OpenAI's Completion API
-        response = openai.Completion.create(
-            model="gpt-3.5-turbo",  # Replace with your fine-tuned model ID if applicable
-            prompt=message_body,
-            max_tokens=150,
-        )
-        new_message = response.choices[0].text.strip()
-        print(f"Generated message: {new_message}")
-        return new_message
+# Some files have a processing delay. Wait for them to be ready.
+wait_for_files_active(files)
 
-    except openai.error.OpenAIError as e:
-        print(f"An error occurred: {e}")
-        return None
+chat_session = model.start_chat(
+  history=[
+    {
+      "role": "user",
+      "parts": [
+        "Hello",
+      ],
+    },
+    {
+      "role": "model",
+      "parts": [
+        "Hey there! 👋 I'm Bina, your new SDGs Bestie! 💖 No drama, just goals and vibes - sustainable ones! 🌎. Think of me as your guide to making the world a better place by taking you through the journey of understanding the Sustainable Development Goals. What's got you interested in the SDGs today? 😊",
+      ],
+    },
+  ]
+)
 
-# --------------------------------------------------------------
-# Thread management (placeholder)
-# --------------------------------------------------------------
-def check_if_thread_exists(wa_id):
-    with shelve.open("threads_db") as threads_shelf:
-        return threads_shelf.get(wa_id, None)
+def remove_repetitions(text):
+    lines = text.split('\n')
+    return '\n'.join(dict.fromkeys(lines))
 
-def store_thread(wa_id, thread_id):
-    with shelve.open("threads_db", writeback=True) as threads_shelf:
-        threads_shelf[wa_id] = thread_id
+response = chat_session.send_message("What are the main targets of SDG 7?")
 
-# --------------------------------------------------------------
-# Test assistant
-# --------------------------------------------------------------
-new_message = generate_response("What are the Sustainable Development Goals?", "123", "Bob")
-new_message = generate_response("How many SDGs do we have?", "456", "Louisa")
-new_message = generate_response("Where can I find data on gender equality?", "123", "Bob")
-new_message = generate_response("What are the main targets of SDG 7?", "456", "Louisa")
+cleaned_response = remove_repetitions(response.text)
+print(cleaned_response)
