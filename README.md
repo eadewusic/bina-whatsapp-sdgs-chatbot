@@ -22,7 +22,7 @@ The first of its kind! Bina is a WhatsApp chatbot designed to help users learn m
 - [Prerequisites](#prerequisites)
   - [For Users](#for-users)
   - [For Developers](#for-developers)
-  - [Table of Contents](#table-of-contents)
+- [Table of Contents](#table-of-contents)
   - [Get Started](#get-started)
   - [Step 1: Select Phone Numbers](#step-1-select-phone-numbers)
   - [Step 2: Send Messages with the API](#step-2-send-messages-with-the-api)
