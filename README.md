@@ -48,7 +48,7 @@ The first of its kind! Bina is a WhatsApp chatbot designed to help users learn m
 - Pure Python.
 - Flask.
 - Webhook events to receive messages in real-time.
-- Gemini Pro to generate AI responses.
+- Gemini 1.5 Pro to generate AI responses.
 - Ngrok for tunnelling localhost to a public URL.
 
 ## Prerequisites
@@ -207,7 +207,7 @@ Review the developer documentation to learn how to build your app and start send
 
 ## Step 6: Integrate AI into the Application
 
-> Please note, [OpenAI API](https://platform.openai.com/playground/assistants) is not free, it costs $5 as of August 1st, 2024. [Gemini API](https://ai.google.dev/gemini-api) is free but offers 60 requests per second. [Groq API](https://console.groq.com/playground) is also free but it allows for 20 requests per minute.
+> Please note, [OpenAI API](https://platform.openai.com/playground/assistants) is not free, it costs $5 as of August 1st, 2024. [Gemini API](https://ai.google.dev/gemini-api) is free but offers 2 requests per minute and 50 requests per day for Gemini 1.5 Pro, you check the default quota [here](https://ai.google.dev/pricing). [Groq API](https://console.groq.com/playground) is also free but it allows for 20 requests per minute.
 
 Now that we have an end to end connection, we can make the bot a little more clever then just shouting at us in upper case. All you have to do is come up with your own `generate_response()` function in [whatsapp_utils.py](https://github.com/eadewusic/bina-whatsapp-sdgs-chatbot/blob/main/app/utils/whatsapp_utils.py).
 
