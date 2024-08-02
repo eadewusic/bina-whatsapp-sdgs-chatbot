@@ -3,10 +3,14 @@
 The first of its kind! Bina is a WhatsApp chatbot designed to help users learn more about the United Nations Sustainable Development Goals (SDGs). The bot interacts with users by responding to their queries about the SDGs and provides relevant information and resources.
 
 ## Features
-- Responds to user queries about SDGs.
-- Provides information on each of the 17 SDGs.
+- Explains sustainability concepts clearly and concisely.
+- Responds to user queries about the SDGs.
+- Provides information on each of the 17 SDGs, including targets and indicators.
+- Analyses user-submitted project ideas to identify relevant SDGs.
+- Suggests relevant solutions aligned with the SDGs (when prompted).
+- Provides information about organisations working on specific SDGs (when prompted).
 - Logs conversations for debugging and future improvements.
-- Easily extensible for additional features.
+- Offers additional resources for further learning (when prompted).
 
 ## Technologies Used
 
@@ -21,7 +25,7 @@ The first of its kind! Bina is a WhatsApp chatbot designed to help users learn m
 1. Have a functional WhatsApp account.
 2. Have access to the internet.
 3. Be open-minded and ready to learn.
-4. Chat away with Bina and go add your footprint to the sands of Social Impact.
+4. Chat away with Bina, take action and leave your footprint in the sands of Social Impact.
 
 ## Prerequisites (for Developers)
 
