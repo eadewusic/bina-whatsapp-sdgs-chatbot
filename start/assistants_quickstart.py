@@ -65,5 +65,9 @@ def remove_repetitions(text):
 
 def save_conversation(conversation):
     """Saves the conversation history to a file."""
-    with shelve.open("conversations.db") as db:
-        db["conversation"] = conversation
+    try:
+        with shelve.open("conversations.db") as db:
+            db["conversation"] = conversation
+            print("Conversation saved successfully.")
+    except Exception as e:
+        print(f"An error occurred while saving the conversation: {e}")
