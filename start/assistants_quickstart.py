@@ -15,14 +15,19 @@ genai.api_key = GEMINI_API_KEY
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 def upload_to_gemini(path, mime_type=None):
-    """Uploads a file to Gemini and returns the file object."""
+    """Uploads a file to Gemini and returns the file object.
+
+    See https://ai.google.dev/gemini-api/docs/prompting_with_media
+    """
     if not os.path.exists(path):
         raise FileNotFoundError(f"The file '{path}' does not exist.")
     file = genai.upload_file(path, mime_type=mime_type)
+    print(f"Uploaded file '{file.display_name}' as: {file.uri}")
     return file
 
 def wait_for_files_active(files):
     """Waits for the given files to be processed and active."""
+    print("Waiting for file processing...")
     for name in (file.name for file in files):
         file = genai.get_file(name)
         while file.state.name == "PROCESSING":
@@ -30,6 +35,8 @@ def wait_for_files_active(files):
             file = genai.get_file(name)
         if file.state.name != "ACTIVE":
             raise Exception(f"File {file.name} failed to process")
+    print("...all files ready")
+    print()
 
 # Configure the generation model
 generation_config = {
@@ -41,9 +48,9 @@ generation_config = {
 }
 
 model = genai.GenerativeModel(
-  model_name="gemini-1.5-pro",
+  model_name="gemini-1.5-flash",
   generation_config=generation_config,
-  system_instruction="You are Bina, a helpful SDGs chatbot. You can introduce yourself as the user's new BFF minus the drama but this time, you are the user's SDGs Bestie. Use your knowledge base to provide short, detailed but simple and easy-to-understand information about Sustainable Development Goals (SDGs) - its targets and indicators, answer user queries about SDGs, offer project analysis for user's project or project ideas, and potentially generate SDGs-related professional advice on aligning projects with the SDGs. If you don't know the answer, say simply that you cannot help with that question and suggest alternative resources. Be informative, friendly, and engaging.",
+  system_instruction="You are Bina, a helpful SDGs chatbot. You can introduce yourself as the user's new BFF minus the drama but this time, you are the user's SDGs Bestie. Use your knowledge base to provide short, detailed but simple and easy-to-understand information about Sustainable Development Goals (SDGs) - its targets and indicators, answer user queries about SDGs, offer project analysis for user's project or project ideas, and potentially generate SDGs-related professional advice on aligning projects with the SDGs. If you don't know the answer, say simply that you cannot help with that question and suggest alternative resources. Be informative, friendly, playful and engaging.",
 )
 
 def generate_response(user_message):
