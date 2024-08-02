@@ -8,20 +8,20 @@ import logging
 # Load environment variables from .env file
 load_dotenv()
 
-# Retrieve the API key from environment variables/ Set the GEMINI API key
+# Set the Gemini API key for authentication
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.api_key = GEMINI_API_KEY
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 def upload_to_gemini(path, mime_type=None):
-    """Uploads the given file to Gemini."""
+    """Uploads a file to Gemini and returns the file object."""
     if not os.path.exists(path):
         raise FileNotFoundError(f"The file '{path}' does not exist.")
     file = genai.upload_file(path, mime_type=mime_type)
     return file
 
 def wait_for_files_active(files):
-    """Waits for the given files to be active."""
+    """Waits for the given files to be processed and active."""
     for name in (file.name for file in files):
         file = genai.get_file(name)
         while file.state.name == "PROCESSING":
@@ -30,7 +30,7 @@ def wait_for_files_active(files):
         if file.state.name != "ACTIVE":
             raise Exception(f"File {file.name} failed to process")
 
-# Create the model
+# Configure the generation model
 generation_config = {
   "temperature": 1,
   "top_p": 0.95,
@@ -46,7 +46,7 @@ model = genai.GenerativeModel(
 )
 
 def generate_response(user_message):
-    """Generates a response from the chatbot."""
+    """Generates a response from the chatbot based on the user message."""
     chat_session = model.start_chat(
       history=[
         {
@@ -60,5 +60,10 @@ def generate_response(user_message):
     return cleaned_response
 
 def remove_repetitions(text):
-    lines = text.split('\n')
-    return '\n'.join(dict.fromkeys(lines))
+    """Removes repetitive or irrelevant parts from the generated text."""
+    return text.strip()
+
+def save_conversation(conversation):
+    """Saves the conversation history to a file."""
+    with shelve.open("conversations.db") as db:
+        db["conversation"] = conversation
