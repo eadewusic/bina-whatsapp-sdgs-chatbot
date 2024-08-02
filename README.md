@@ -50,7 +50,7 @@ Think of her as a knowledgeable companion and resource for young people seeking 
 - Pure Python.
 - Flask.
 - Webhook events to receive messages in real-time.
-- Gemini 1.5 Pro to generate AI responses.
+- Gemini 1.5 Flash to generate AI responses.
 - Ngrok for tunnelling localhost to a public URL.
 
 ## Prerequisites
